@@ -9,7 +9,9 @@ import com.community.service.entity.VolunteerProfile;
 import com.community.service.mapper.ActivityRepository;
 import com.community.service.mapper.AnnouncementRepository;
 import com.community.service.mapper.DemandCommentRepository;
+import com.community.service.mapper.DemandParticipantRepository;
 import com.community.service.mapper.DemandRepository;
+import com.community.service.mapper.ProgressReportRepository;
 import com.community.service.mapper.ProductRepository;
 import com.community.service.mapper.RedemptionRepository;
 import com.community.service.mapper.UserRepository;
@@ -42,6 +44,8 @@ public class AdminController {
     private final VolunteerProfileRepository volunteerProfileRepository;
     private final ActivityRepository activityRepository;
     private final DemandRepository demandRepository;
+    private final DemandParticipantRepository demandParticipantRepository;
+    private final ProgressReportRepository progressReportRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final DemandCommentRepository demandCommentRepository;
@@ -316,8 +320,13 @@ public class AdminController {
         return "redirect:/admin/demands?updated=true";
     }
 
+    @Transactional
     @PostMapping("/demands/{id}/delete")
     public String deleteDemand(@PathVariable Long id) {
+        demandCommentRepository.deleteByDemandId(id);
+        demandParticipantRepository.deleteByDemandId(id);
+        var demand = demandRepository.findById(id).orElseThrow();
+        progressReportRepository.deleteByDemand(demand);
         demandRepository.deleteById(id);
         return "redirect:/admin/demands?deleted=true";
     }

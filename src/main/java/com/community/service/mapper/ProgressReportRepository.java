@@ -14,4 +14,5 @@ public interface ProgressReportRepository extends JpaRepository<ProgressReport, 
     List<ProgressReport> findByVolunteer(User volunteer);
     List<ProgressReport> findByDemandOrderByCreatedAtDesc(Demand demand);
     List<ProgressReport> findByVolunteerOrderByCreatedAtDesc(User volunteer);
+    void deleteByDemand(Demand demand);
 }

@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface DemandCommentRepository extends JpaRepository<DemandComment, Long> {
     List<DemandComment> findByDemandIdOrderByCreatedAtDesc(Long demandId);
+    void deleteByDemandId(Long demandId);
 }
 

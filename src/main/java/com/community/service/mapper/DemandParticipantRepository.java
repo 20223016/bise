@@ -12,4 +12,6 @@ public interface DemandParticipantRepository extends JpaRepository<DemandPartici
     List<DemandParticipant> findByDemandIdOrderByCreatedAtDesc(Long demandId);
 
     List<DemandParticipant> findByVolunteerOrderByCreatedAtDesc(User volunteer);
+
+    void deleteByDemandId(Long demandId);
 }
