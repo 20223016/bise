@@ -155,91 +155,42 @@
                 </a>
             </div>
             
-            <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-                <!-- Activity Card 1 -->
-                <div class="group bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3" th:if="${!activities.empty}">
+                <div th:each="activity : ${activities}" class="group bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
                     <div class="relative h-64 overflow-hidden">
-                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/imp/home/activity.svg" alt="Activity">
+                        <img th:if="${activity.imageUrl != null}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" th:src="${activity.imageUrl}" alt="Activity">
+                        <img th:if="${activity.imageUrl == null}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/imp/home/activity.svg" alt="Activity">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-xs font-black text-primary-700 shadow-sm">环境卫生</span>
-                        </div>
                     </div>
                     <div class="p-8 flex-grow flex flex-col">
-                        <h3 class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors">周末社区公园大清扫</h3>
-                        <p class="text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed">协助清理公园绿地、步道，共同维护社区美好的休闲环境，为邻里创造整洁空间。</p>
+                        <h3 class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors" th:text="${activity.title}">活动标题</h3>
+                        <p class="text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed" th:text="${activity.description}">活动简介</p>
                         <div class="mt-auto space-y-6">
                             <div class="flex items-center justify-between pt-6 border-t border-slate-50">
                                 <div class="flex items-center text-slate-400 font-bold text-sm">
                                     <svg class="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                    社区中心公园
+                                    <span th:text="${activity.location}">活动地点</span>
                                 </div>
-                                <div class="text-primary-600 font-black">
-                                    50 积分
+                                <div class="text-primary-600 font-black" th:text="${activity.basePoints + ' 积分'}">
+                                    积分
                                 </div>
                             </div>
-                            <a href="/activities" class="block w-full py-4 bg-slate-50 text-slate-900 font-black rounded-2xl group-hover:bg-primary-600 group-hover:text-white text-center transition-all">
+                            <a th:href="@{/activities/{id}(id=${activity.id})}" class="block w-full py-4 bg-slate-50 text-slate-900 font-black rounded-2xl group-hover:bg-primary-600 group-hover:text-white text-center transition-all">
                                 查看详情
                             </a>
                         </div>
                     </div>
                 </div>
-                <!-- Card 2 -->
-                <div class="group bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
-                    <div class="relative h-64 overflow-hidden">
-                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/imp/home/health.svg" alt="Health">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-xs font-black text-red-700 shadow-sm">医疗义诊</span>
-                        </div>
-                    </div>
-                    <div class="p-8 flex-grow flex flex-col">
-                        <h3 class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors">社区健康行义诊活动</h3>
-                        <p class="text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed">为中老年居民提供免费血压测量、健康咨询及用药指导，欢迎医护背景志愿者。</p>
-                        <div class="mt-auto space-y-6">
-                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
-                                <div class="flex items-center text-slate-400 font-bold text-sm">
-                                    <svg class="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                    文化广场
-                                </div>
-                                <div class="text-primary-600 font-black">
-                                    100 积分
-                                </div>
-                            </div>
-                            <a href="/activities" class="block w-full py-4 bg-slate-50 text-slate-900 font-black rounded-2xl group-hover:bg-primary-600 group-hover:text-white text-center transition-all">
-                                查看详情
-                            </a>
-                        </div>
-                    </div>
+            </div>
+            
+            <div th:if="${activities.empty}" class="text-center py-20 bg-white rounded-3xl shadow-soft border border-slate-100">
+                <div class="h-20 w-20 mx-auto bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                    <svg class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                 </div>
-                <!-- Card 3 -->
-                <div class="group bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
-                    <div class="relative h-64 overflow-hidden">
-                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/imp/home/education.svg" alt="Education">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-xs font-black text-yellow-700 shadow-sm">课业辅导</span>
-                        </div>
-                    </div>
-                    <div class="p-8 flex-grow flex flex-col">
-                        <h3 class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors">课后“四点半”学堂</h3>
-                        <p class="text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed">辅导社区内双职工家庭孩子的作业，开展趣味科普活动，陪伴孩子们快乐成长。</p>
-                        <div class="mt-auto space-y-6">
-                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
-                                <div class="flex items-center text-slate-400 font-bold text-sm">
-                                    <svg class="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                    党群服务中心
-                                </div>
-                                <div class="text-primary-600 font-black">
-                                    80 积分
-                                </div>
-                            </div>
-                            <a href="/activities" class="block w-full py-4 bg-slate-50 text-slate-900 font-black rounded-2xl group-hover:bg-primary-600 group-hover:text-white text-center transition-all">
-                                查看详情
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2">暂无活动</h3>
+                <p class="text-slate-500 font-medium">请稍后再查看或联系管理员添加活动</p>
             </div>
         </div>
     </section>
