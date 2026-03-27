@@ -16,7 +16,6 @@ import com.community.service.mapper.UserRepository;
 import com.community.service.mapper.VolunteerProfileRepository;
 import com.community.service.service.ActivityService;
 import com.community.service.service.AnnouncementService;
-import com.community.service.service.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,7 +49,6 @@ public class AdminController {
     private final RedemptionRepository redemptionRepository;
     private final ActivityService activityService;
     private final AnnouncementRepository announcementRepository;
-    private final PointService pointService;
 
     @Value("${app.upload.dir:uploads}")
     private String uploadDir;
@@ -89,7 +87,8 @@ public class AdminController {
                                    @AuthenticationPrincipal User admin,
                                    RedirectAttributes redirectAttributes) {
         User user = userRepository.findById(id).orElseThrow();
-        pointService.adjustPoints(user, points - user.getPoints(), reason);
+        user.setPoints(points);
+        userRepository.save(user);
         redirectAttributes.addFlashAttribute("success", "积分修改成功");
         return "redirect:/admin/users";
     }
