@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='我的积分', content=~{::section})}">
+<body>
+    <section class="max-w-4xl mx-auto space-y-12 pb-20">
+        <!-- Breadcrumbs -->
+        <nav class="flex text-sm font-bold text-slate-400 uppercase tracking-widest" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="/profile" class="hover:text-primary-600 transition-colors">个人中心</a></li>
+                <li class="flex items-center space-x-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <span class="text-slate-900">积分明细</span>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight">积分变动记录</h1>
+            <div class="bg-primary-900 px-8 py-4 rounded-[2rem] shadow-vibrant flex items-center gap-4">
+                <p class="text-[10px] font-black text-primary-400 uppercase tracking-widest">当前总余额</p>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-white tracking-tighter" th:text="${#authentication.principal.points}">0</span>
+                    <span class="text-[10px] font-black text-primary-300 uppercase tracking-widest">Points</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 每日签到区域 -->
+        <div class="bg-gradient-to-r from-primary-600 to-primary-800 rounded-[2.5rem] shadow-vibrant p-8 md:p-10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="flex items-center gap-6">
+                    <div class="h-16 w-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                        <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-black text-white mb-1">每日签到</h3>
+                        <p class="text-primary-200 font-bold text-sm">签到可获得 <span class="text-white font-black">5积分</span></p>
+                    </div>
+                </div>
+                <form th:action="@{/points/sign-in}" method="post">
+                    <button type="submit" class="bg-white text-primary-700 px-8 py-4 rounded-2xl font-black hover:bg-primary-50 hover:scale-105 active:scale-95 transition-all shadow-lg">
+                        立即签到
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 积分获取途径 -->
+        <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden">
+            <div class="p-8 md:p-10 border-b border-slate-100">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center">
+                    <span class="h-6 w-1.5 bg-primary-600 rounded-full mr-4"></span>
+                    积分获取途径
+                </h2>
+            </div>
+            <div class="p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-green-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-green-800">每日签到</h4>
+                    </div>
+                    <p class="text-green-700 font-bold text-sm mb-2">每日签到一次</p>
+                    <p class="text-2xl font-black text-green-900">+5 积分</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-blue-800">首次注册</h4>
+                    </div>
+                    <p class="text-blue-700 font-bold text-sm mb-2">新用户注册奖励</p>
+                    <p class="text-2xl font-black text-blue-900">+100 积分</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border border-purple-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-purple-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-purple-800">活动参与</h4>
+                    </div>
+                    <p class="text-purple-700 font-bold text-sm mb-2">参加志愿活动</p>
+                    <p class="text-2xl font-black text-purple-900">+10 积分</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-2xl border border-orange-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-orange-800">帮助他人</h4>
+                    </div>
+                    <p class="text-orange-700 font-bold text-sm mb-2">解决他人需求</p>
+                    <p class="text-2xl font-black text-orange-900">+15 积分</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-2xl border border-pink-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-pink-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-pink-800">招募志愿者</h4>
+                    </div>
+                    <p class="text-pink-700 font-bold text-sm mb-2">每招募1人</p>
+                    <p class="text-2xl font-black text-pink-900">+5 积分</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-2xl border border-yellow-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-yellow-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h1.302l1.519-4.674c.3-.921-.001-1.603-.921-1.902 0l-1.519 4.674a1 1 0 00-.951.69h-1.302l-1.519-4.674z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l7-7 7 7-7" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-yellow-800">优秀志愿者</h4>
+                    </div>
+                    <p class="text-yellow-700 font-bold text-sm mb-2">获得优秀称号</p>
+                    <p class="text-2xl font-black text-yellow-900">+50 积分</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 积分消耗途径 -->
+        <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden">
+            <div class="p-8 md:p-10 border-b border-slate-100">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center">
+                    <span class="h-6 w-1.5 bg-red-600 rounded-full mr-4"></span>
+                    积分消耗途径
+                </h2>
+            </div>
+            <div class="p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-2xl border border-red-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-red-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 002 2 0 012-2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-red-800">兑换商品</h4>
+                    </div>
+                    <p class="text-red-700 font-bold text-sm mb-2">使用积分兑换礼品</p>
+                    <a href="/redemption" class="inline-flex items-center text-red-900 font-black hover:underline">
+                        前往兑换
+                        <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4-4m4 4H3" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-2xl border border-gray-200 hover:shadow-lg transition-all">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="h-10 w-10 bg-gray-500 rounded-xl flex items-center justify-center">
+                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-black text-gray-800">违规罚款</h4>
+                    </div>
+                    <p class="text-gray-700 font-bold text-sm mb-2">违反规定扣除积分</p>
+                    <p class="text-gray-900 font-black">按违规程度扣除</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 签到成功提示 -->
+        <div th:if="${param.signInSuccess}" class="p-6 bg-green-50 border-2 border-green-100 text-green-700 rounded-3xl flex items-center mb-8 animate-pulse" style="animation-duration: 1s;">
+            <img src="/uploads/avatars/from-PixAI-1968058336152239562MIKU.png" alt="签到成功" class="h-12 w-12 mr-4 rounded-full">
+            <p class="font-black">签到成功！获得5积分，明天继续签到哦。</p>
+        </div>
+
+        <!-- 签到失败提示 -->
+        <div th:if="${param.signInError}" class="p-6 bg-red-50 border-2 border-red-100 text-red-700 rounded-3xl flex items-center mb-8">
+            <svg class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <p class="font-black" th:text="${param.signInError}">签到失败</p>
+        </div>
+
+        <div th:if="${records.empty}" class="bg-white p-20 rounded-[3rem] shadow-soft border border-slate-100 text-center">
+            <div class="h-24 w-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
+                <span class="text-5xl">📄</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4">暂无积分变动</h3>
+            <p class="text-slate-500 font-bold max-w-sm mx-auto">参加志愿活动或兑换礼品后，您的积分记录将出现在这里。</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden">
+            <table class="min-w-full divide-y divide-slate-100">
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th class="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">变动时间</th>
+                        <th class="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">描述</th>
+                        <th class="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">业务类型</th>
+                        <th class="px-10 py-6 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">积分变动</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <tr th:each="record : ${records}" class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-10 py-8 whitespace-nowrap">
+                            <p class="text-sm font-black text-slate-900" th:text="${#temporals.format(record.createdAt, 'yyyy-MM-dd')}">日期</p>
+                            <p class="text-[10px] font-bold text-slate-400 mt-1" th:text="${#temporals.format(record.createdAt, 'HH:mm:ss')}">时间</p>
+                        </td>
+                        <td class="px-10 py-8">
+                            <p class="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors" th:text="${record.description}">描述</p>
+                        </td>
+                        <td class="px-10 py-8 whitespace-nowrap">
+                            <span th:text="${record.type.name().replace('_', ' ')}"
+                                  th:class="${record.amount > 0 ? 
+                                    (record.type.name().contains('SIGN_IN') ? 'bg-green-50 text-green-700 border-green-100' :
+                                    (record.type.name().contains('REGISTER') ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                    (record.type.name().contains('ACTIVITY') ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                    (record.type.name().contains('DEMAND') ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                                    (record.type.name().contains('VOLUNTEER') ? 'bg-pink-50 text-pink-700 border-pink-100' :
+                                    (record.type.name().contains('EXCELLENT') ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
+                                    (record.type.name().contains('SERVICE') ? 'bg-green-50 text-green-700 border-green-100' :
+                                    'bg-blue-50 text-blue-700 border-blue-100'))) :
+                                    (record.type.name().contains('REDEMPTION') ? 'bg-red-50 text-red-700 border-red-100' :
+                                    (record.type.name().contains('FINE') ? 'bg-gray-50 text-gray-700 border-gray-100' :
+                                    'bg-blue-50 text-blue-700 border-blue-100'))}"
+                                  class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full border">类型</span>
+                        </td>
+                        <td class="px-10 py-8 whitespace-nowrap text-right">
+                            <span th:text="${record.amount > 0 ? '+' + record.amount : record.amount}"
+                                  th:class="${record.amount > 0 ? 'text-green-600' : 'text-red-600'}"
+                                  class="text-xl font-black tracking-tighter">变动额</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# 编译输出、jar包
+target/
+*.jar
+
+# IDE 配置文件
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# 日志和上传文件
+uploads/
+*.log
+nohup.out
+
+# 数据库脚本可以保留，配置文件也保留
+!volunteer_service_deploy.sql
+!src/main/resources/application*.yml

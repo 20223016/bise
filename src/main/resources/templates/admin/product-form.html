@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: layout(title='添加商品', content=~{::section})}">
+<body>
+    <section class="max-w-3xl mx-auto py-12 px-4">
+        <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-soft border border-slate-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 -mt-12 -ml-12 h-40 w-40 bg-primary-50 rounded-full blur-3xl opacity-50"></div>
+
+            <div class="relative">
+                <div class="text-center mb-12">
+                    <div class="mx-auto h-16 w-16 bg-primary-600 rounded-2xl flex items-center justify-center mb-6 shadow-vibrant">
+                        <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                    </div>
+                    <h2 class="text-4xl font-black text-slate-900 tracking-tight">添加商品</h2>
+                    <p class="mt-4 text-slate-500 font-bold text-lg">为积分兑换中心添加新商品</p>
+                </div>
+
+                <form th:action="@{/admin/products}" method="post" enctype="multipart/form-data" class="space-y-10">
+                    <div class="space-y-8">
+                        <div>
+                            <label for="name" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">商品名称</label>
+                            <input type="text" id="name" name="name" required
+                                   class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900"
+                                   placeholder="如：大米、环保清洁剂、电影票">
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">商品描述</label>
+                            <textarea id="description" name="description" rows="3" required
+                                      class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900 resize-none"
+                                      placeholder="请输入商品描述"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label for="requiredPoints" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">所需积分</label>
+                                <input type="number" id="requiredPoints" name="requiredPoints" required min="1"
+                                       class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900"
+                                       placeholder="如：500">
+                            </div>
+                            <div>
+                                <label for="stock" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">初始库存</label>
+                                <input type="number" id="stock" name="stock" required min="0"
+                                       class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900"
+                                       placeholder="如：10">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="image" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">商品图片（可选）</label>
+                            <input type="file" id="image" name="image" accept="image/*"
+                                   class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-white file:font-black file:text-slate-700 hover:file:bg-slate-50">
+                            <p class="mt-3 text-xs font-bold text-slate-400">支持常见图片格式，建议小于 2MB</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 flex flex-col gap-4">
+                        <button type="submit"
+                                class="w-full py-5 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 shadow-vibrant hover:scale-[1.02] active:scale-[0.98] transition-all text-xl">
+                            添加商品
+                        </button>
+                        <a href="/admin/products" class="w-full py-5 bg-slate-100 text-slate-700 font-black rounded-2xl hover:bg-slate-200 transition-all text-xl text-center">
+                            返回列表
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='AI 小助手', content=~{::section})}">
+<body>
+    <section class="max-w-5xl mx-auto space-y-12 pb-20">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-3">AI 小助手</h1>
+                <p class="text-slate-500 font-bold text-lg">帮助你更清晰地发布需求、理解系统流程与注意事项。</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[3rem] shadow-soft border border-slate-100 overflow-hidden">
+            <div class="p-8 md:p-10 border-b border-slate-100 flex items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <img src="/imp/from-PixAI-1988537827829857880.png" onerror="this.onerror=null;this.src='/imp/assistant-avatar.svg';"
+                         class="h-12 w-12 rounded-full object-cover border border-slate-200 shadow-sm" alt="AI">
+                    <div>
+                        <p class="text-lg font-black text-slate-900">小助手</p>
+                        <p class="text-xs font-bold text-slate-400">在线 · 支持需求引导与系统问答</p>
+                    </div>
+                </div>
+                <button id="clearChat" type="button" class="px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 font-black text-xs hover:bg-slate-100 transition">
+                    清空对话
+                </button>
+            </div>
+
+            <div class="p-8 md:p-10 space-y-6">
+                <div id="chatList" class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <img src="/imp/from-PixAI-1988537827829857880.png" onerror="this.onerror=null;this.src='/imp/assistant-avatar.svg';"
+                             class="h-10 w-10 rounded-full object-cover border border-slate-200 shadow-sm" alt="AI">
+                        <div class="max-w-[80%] bg-slate-50 border border-slate-100 rounded-[2rem] px-6 py-4">
+                            <p class="text-slate-800 font-bold leading-relaxed whitespace-pre-line">你好！你可以告诉我：你想发布什么需求、希望什么时候完成、紧急程度、是否需要带工具/物资。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="chatForm" class="pt-6 border-t border-slate-100 space-y-4">
+                    <textarea id="chatInput" rows="4" required
+                              class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900 resize-none"
+                              placeholder="输入你的问题或需求描述（建议包含时间/地点/紧急程度）"></textarea>
+                    <div class="flex items-center justify-between gap-4">
+                        <p id="chatHint" class="text-xs font-bold text-slate-400">消息将发送到 DashScope 兼容接口。</p>
+                        <button id="sendBtn" type="submit"
+                                class="inline-flex items-center justify-center px-8 py-4 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 shadow-vibrant hover:scale-105 active:scale-95 transition-all">
+                            发送
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                var chatList = document.getElementById('chatList');
+                var chatForm = document.getElementById('chatForm');
+                var chatInput = document.getElementById('chatInput');
+                var clearBtn = document.getElementById('clearChat');
+                var sendBtn = document.getElementById('sendBtn');
+                var hint = document.getElementById('chatHint');
+
+                var storageKey = 'assistant_messages_v1';
+                var messages = [];
+
+                function renderMessage(role, content) {
+                    var row = document.createElement('div');
+                    row.className = 'flex items-start gap-4 ' + (role === 'user' ? 'justify-end' : '');
+
+                    if (role !== 'user') {
+                        var img = document.createElement('img');
+                        img.src = '/imp/from-PixAI-1988537827829857880.png';
+                        img.onerror = function () { img.onerror = null; img.src = '/imp/assistant-avatar.svg'; };
+                        img.className = 'h-10 w-10 rounded-full object-cover border border-slate-200 shadow-sm';
+                        img.alt = 'AI';
+                        row.appendChild(img);
+                    }
+
+                    var bubble = document.createElement('div');
+                    bubble.className = 'max-w-[80%] rounded-[2rem] px-6 py-4 border font-bold leading-relaxed whitespace-pre-line ' +
+                        (role === 'user'
+                            ? 'bg-primary-600 text-white border-primary-600'
+                            : 'bg-slate-50 text-slate-800 border-slate-100');
+                    bubble.textContent = content;
+                    row.appendChild(bubble);
+
+                    if (role === 'user') {
+                        var spacer = document.createElement('div');
+                        spacer.className = 'h-10 w-10';
+                        row.insertBefore(spacer, bubble);
+                    }
+
+                    chatList.appendChild(row);
+                    chatList.scrollTop = chatList.scrollHeight;
+                }
+
+                function save() {
+                    try { localStorage.setItem(storageKey, JSON.stringify(messages)); } catch (e) {}
+                }
+
+                function load() {
+                    try {
+                        var raw = localStorage.getItem(storageKey);
+                        if (!raw) return;
+                        var parsed = JSON.parse(raw);
+                        if (!Array.isArray(parsed)) return;
+                        messages = parsed.filter(function (m) { return m && m.role && m.content; }).slice(-10);
+                        for (var i = 0; i < messages.length; i++) {
+                            renderMessage(messages[i].role, messages[i].content);
+                        }
+                    } catch (e) {}
+                }
+
+                clearBtn.addEventListener('click', function () {
+                    messages = [];
+                    try { localStorage.removeItem(storageKey); } catch (e) {}
+                    location.reload();
+                });
+
+                // 添加快捷键支持：回车键发送，Ctrl+回车键换行
+                chatInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.ctrlKey) {
+                        e.preventDefault();
+                        chatForm.dispatchEvent(new Event('submit'));
+                    }
+                });
+
+                chatForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    var text = (chatInput.value || '').trim();
+                    if (!text) return;
+
+                    renderMessage('user', text);
+                    messages.push({ role: 'user', content: text });
+                    messages = messages.slice(-10);
+                    save();
+
+                    chatInput.value = '';
+                    sendBtn.disabled = true;
+                    sendBtn.classList.add('opacity-60');
+                    hint.textContent = '正在思考中…';
+
+                    try {
+                        var resp = await fetch('/api/assistant/chat', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            body: JSON.stringify({ messages: messages })
+                        });
+                        var data = await resp.json();
+                        if (!resp.ok) throw new Error(data && data.message ? data.message : '请求失败');
+                        var reply = data && data.reply ? data.reply : 'AI 未返回内容';
+                        renderMessage('assistant', reply);
+                        messages.push({ role: 'assistant', content: reply });
+                        messages = messages.slice(-10);
+                        save();
+                        hint.textContent = '消息将发送到 DashScope 兼容接口。（回车发送，Ctrl+回车换行）';
+                    } catch (err) {
+                        renderMessage('assistant', 'AI 调用失败：' + (err && err.message ? err.message : '未知错误'));
+                        hint.textContent = '请检查后端配置后重试。（回车发送，Ctrl+回车换行）';
+                    } finally {
+                        sendBtn.disabled = false;
+                        sendBtn.classList.remove('opacity-60');
+                    }
+                });
+
+                load();
+            })();
+        </script>
+    </section>
+</body>
+</html>
+

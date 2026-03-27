@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='任务进度汇报', content=~{::section})}">
+<body>
+    <section class="max-w-6xl mx-auto space-y-12 pb-20">
+        <!-- Breadcrumbs -->
+        <nav class="flex text-sm font-bold text-slate-400 uppercase tracking-widest" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="/demands" class="hover:text-primary-600 transition-colors">互助需求</a></li>
+                <li class="flex items-center space-x-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <span class="text-slate-900" th:text="${demand.title}">需求标题</span>
+                </li>
+                <li class="flex items-center space-x-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <span class="text-slate-900">进度汇报</span>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- 需求信息 -->
+        <div class="bg-gradient-to-r from-primary-600 to-primary-800 rounded-[2.5rem] shadow-vibrant p-8 md:p-10">
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div class="flex-1">
+                    <h1 class="text-3xl font-black text-white mb-4" th:text="${demand.title}">需求标题</h1>
+                    <p class="text-primary-200 font-bold text-sm mb-4" th:text="${demand.summary}">需求摘要</p>
+                    <div class="flex items-center gap-4">
+                        <span class="px-4 py-1.5 bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white" 
+                              th:text="${demand.type}">类型</span>
+                        <span class="px-4 py-1.5 bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white" 
+                              th:text="${demand.urgency}">紧急程度</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="mb-2">
+                        <p class="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-1">当前进度</p>
+                        <div class="text-4xl font-black text-white tracking-tighter" th:text="${demand.progressPercentage != null ? demand.progressPercentage + '%' : '0%'}">0%</div>
+                    </div>
+                    <div class="w-48 h-3 bg-white/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-white rounded-full transition-all duration-500" 
+                             th:style="'width: ' + (${demand.progressPercentage != null ? demand.progressPercentage : 0}) + '%'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新建汇报按钮 -->
+        <div class="flex justify-end" sec:authorize="isAuthenticated()">
+            <a th:href="@{/demands/{id}/reports/new(id=${demand.id})}" 
+               class="inline-flex items-center px-8 py-4 bg-primary-600 text-white rounded-2xl font-black hover:bg-primary-700 hover:scale-105 active:scale-95 transition-all shadow-lg">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                新建进度汇报
+            </a>
+        </div>
+
+        <!-- 提示信息 -->
+        <div th:if="${success}" class="p-6 bg-green-50 border-2 border-green-100 text-green-700 rounded-3xl flex items-center shadow-sm">
+            <div class="h-10 w-10 bg-white rounded-full flex items-center justify-center mr-4 shadow-sm">
+                <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <p class="font-black" th:text="${success}">操作成功</p>
+        </div>
+
+        <div th:if="${error}" class="p-6 bg-red-50 border-2 border-red-100 text-red-700 rounded-3xl flex items-center shadow-sm">
+            <div class="h-10 w-10 bg-white rounded-full flex items-center justify-center mr-4 shadow-sm">
+                <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>
+            </div>
+            <p class="font-black" th:text="${error}">操作失败</p>
+        </div>
+
+        <!-- 进度汇报列表 -->
+        <div th:if="${reports.empty}" class="bg-white p-20 rounded-[3rem] shadow-soft border border-slate-100 text-center">
+            <div class="h-24 w-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
+                <span class="text-5xl">📊</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4">暂无进度汇报</h3>
+            <p class="text-slate-500 font-bold max-w-sm mx-auto">志愿者还没有提交任何进度汇报，请等待志愿者更新任务进度。</p>
+        </div>
+
+        <div th:if="${!reports.empty}" class="space-y-8">
+            <div th:each="report : ${reports}" 
+                 class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500">
+                <div class="p-8 md:p-10">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="h-12 w-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center">
+                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-900">进度汇报</h3>
+                                    <p class="text-slate-400 font-bold text-xs" th:text="${#temporals.format(report.createdAt, 'yyyy-MM-dd HH:mm:ss')}">时间</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">完成进度</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="text-3xl font-black text-primary-600" th:text="${report.progressPercentage + '%'}">0%</div>
+                                    <div class="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-primary-500 to-primary-700 rounded-full transition-all duration-500" 
+                                             th:style="'width: ' + ${report.progressPercentage} + '%'"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:if="${report.resourcesUsed != null and !report.resourcesUsed.isEmpty()}" class="mb-6">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">使用的资源</p>
+                                <p class="text-slate-600 font-bold text-sm" th:text="${report.resourcesUsed}">资源信息</p>
+                            </div>
+
+                            <div th:if="${report.reportContent != null and !report.reportContent.isEmpty()}" class="mb-6">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">汇报内容</p>
+                                <p class="text-slate-600 font-bold text-sm leading-relaxed" th:text="${report.reportContent}">汇报内容</p>
+                            </div>
+
+                            <div th:if="${report.imageUrl != null}" class="mb-6">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">相关图片</p>
+                                <img th:src="${report.imageUrl}" alt="汇报图片" class="rounded-2xl max-w-md shadow-lg">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-3">
+                            <div class="bg-slate-50 rounded-2xl p-4">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">平台审核</p>
+                                <span th:if="${report.platformApprovalStatus.name() == 'PENDING'}" 
+                                      class="inline-flex items-center px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-xl text-xs font-black">
+                                    待审核
+                                </span>
+                                <span th:if="${report.platformApprovalStatus.name() == 'APPROVED'}" 
+                                      class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-xl text-xs font-black">
+                                    已通过
+                                </span>
+                                <span th:if="${report.platformApprovalStatus.name() == 'REJECTED'}" 
+                                      class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-xl text-xs font-black">
+                                    已拒绝
+                                </span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-4">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">居民审核</p>
+                                <span th:if="${report.residentApprovalStatus.name() == 'PENDING'}" 
+                                      class="inline-flex items-center px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-xl text-xs font-black">
+                                    待审核
+                                </span>
+                                <span th:if="${report.residentApprovalStatus.name() == 'APPROVED'}" 
+                                      class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-xl text-xs font-black">
+                                    已通过
+                                </span>
+                                <span th:if="${report.residentApprovalStatus.name() == 'REJECTED'}" 
+                                      class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-xl text-xs font-black">
+                                    已拒绝
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${report.platformRejectionReason != null}" class="mb-4 p-4 bg-red-50 rounded-2xl">
+                        <p class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">平台拒绝原因</p>
+                        <p class="text-red-700 font-bold text-sm" th:text="${report.platformRejectionReason}">拒绝原因</p>
+                    </div>
+
+                    <div th:if="${report.residentRejectionReason != null}" class="mb-4 p-4 bg-red-50 rounded-2xl">
+                        <p class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">居民拒绝原因</p>
+                        <p class="text-red-700 font-bold text-sm" th:text="${report.residentRejectionReason}">拒绝原因</p>
+                    </div>
+
+                    <!-- 居民审核按钮 - 只有需求发布者（居民）才能看到 -->
+                    <div sec:authorize="hasRole('RESIDENT')" 
+                         th:if="${demand.resident != null and demand.resident.id == #authentication.principal.id and report.residentApprovalStatus.name() == 'PENDING'}" 
+                         class="flex gap-3 pt-4 border-t border-slate-100">
+                        <form th:action="@{/reports/{id}/resident/approve(id=${report.id})}" method="post" class="flex-1">
+                            <button type="submit" class="w-full py-3 bg-green-600 text-white rounded-xl font-black hover:bg-green-700 transition-all text-sm">
+                                通过审核
+                            </button>
+                        </form>
+                        
+                        <button th:onclick="'showRejectModal(\'resident\', ' + ${report.id} + ')'" 
+                                class="flex-1 py-3 bg-red-600 text-white rounded-xl font-black hover:bg-red-700 transition-all text-sm">
+                            拒绝审核
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="rejectModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-[2.5rem] shadow-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-black text-slate-900 mb-4">拒绝审核</h3>
+            <p class="text-slate-600 font-bold mb-6">请输入拒绝原因</p>
+            <textarea id="rejectReason" rows="4" 
+                      class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-700 font-bold focus:outline-none focus:border-primary-500 transition-colors mb-6"
+                      placeholder="请输入拒绝原因"></textarea>
+            <div class="flex gap-4">
+                <button onclick="hideRejectModal()" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-black hover:bg-slate-200 transition-all">
+                    取消
+                </button>
+                <button onclick="submitReject()" class="flex-1 py-3 bg-red-600 text-white rounded-xl font-black hover:bg-red-700 transition-all">
+                    确认拒绝
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRejectType = '';
+        let currentReportId = '';
+
+        function showRejectModal(type, reportId) {
+            currentRejectType = type;
+            currentReportId = reportId;
+            document.getElementById('rejectModal').classList.remove('hidden');
+            document.getElementById('rejectModal').classList.add('flex');
+        }
+
+        function hideRejectModal() {
+            document.getElementById('rejectModal').classList.add('hidden');
+            document.getElementById('rejectModal').classList.remove('flex');
+            document.getElementById('rejectReason').value = '';
+        }
+
+        function submitReject() {
+            const reason = document.getElementById('rejectReason').value;
+            if (!reason.trim()) {
+                alert('请输入拒绝原因');
+                return;
+            }
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            
+            if (currentRejectType === 'resident') {
+                form.action = '/reports/' + currentReportId + '/resident/reject';
+            } else {
+                form.action = '/reports/' + currentReportId + '/platform/reject';
+            }
+
+            const reasonInput = document.createElement('input');
+            reasonInput.type = 'hidden';
+            reasonInput.name = 'rejectionReason';
+            reasonInput.value = reason;
+            form.appendChild(reasonInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>

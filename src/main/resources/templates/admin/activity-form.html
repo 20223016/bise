@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='发布活动', content=~{::section})}">
+<body>
+    <section class="max-w-3xl mx-auto py-12 px-4">
+        <div class="bg-white p-10 md:p-16 rounded-[3rem] shadow-soft border border-slate-100 relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-12 -mr-12 h-40 w-40 bg-primary-50 rounded-full blur-3xl opacity-50"></div>
+            
+            <div class="relative">
+                <div class="text-center mb-12">
+                    <div class="mx-auto h-16 w-16 bg-primary-600 rounded-2xl flex items-center justify-center mb-6 shadow-vibrant">
+                        <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    </div>
+                    <h2 class="text-4xl font-black text-slate-900 tracking-tight">发布新志愿活动</h2>
+                    <p class="mt-4 text-slate-500 font-bold text-lg">开启一次温暖社区的行动，让爱心汇聚</p>
+                </div>
+                
+                <form th:action="@{/admin/activities}" method="post" enctype="multipart/form-data" class="space-y-10">
+                    <div class="space-y-8">
+                        <div>
+                            <label for="title" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">活动标题</label>
+                            <input type="text" id="title" name="title" required
+                                   class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900"
+                                   placeholder="如：社区公园大清扫、助老服务、周末义诊等">
+                        </div>
+
+                        <div>
+                            <label for="image" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">活动图片</label>
+                            <input type="file" id="image" name="image" required accept="image/*"
+                                   class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900">
+                            <p class="mt-2 text-xs text-slate-400 font-bold">请上传活动相关图片（必填）</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label for="startTime" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">开始时间</label>
+                                <input type="datetime-local" id="startTime" name="startTime" required
+                                       class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900">
+                            </div>
+                            <div>
+                                <label for="endTime" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">结束时间</label>
+                                <input type="datetime-local" id="endTime" name="endTime" required
+                                       class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label for="recruitNumber" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">招募人数</label>
+                                <div class="relative group">
+                                    <input type="number" id="recruitNumber" name="recruitNumber" required min="1"
+                                           class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900"
+                                           placeholder="计划招募的人数">
+                                    <div class="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none text-slate-400 font-black text-xs uppercase tracking-widest">人</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="basePoints" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">每小时奖励积分</label>
+                                <div class="relative group">
+                                    <input type="number" id="basePoints" name="basePoints" required min="1"
+                                           class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900"
+                                           placeholder="基础积分奖励">
+                                    <div class="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none text-slate-400 font-black text-xs uppercase tracking-widest">积分</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="location" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">活动地点</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-600 transition-colors">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                </div>
+                                <input type="text" id="location" name="location" required
+                                       class="block w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900"
+                                       placeholder="详细地址">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">活动详细描述</label>
+                            <textarea id="description" name="description" rows="5" required
+                                      class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900 resize-none"
+                                      placeholder="请详细描述活动内容、志愿者要求、注意事项等。"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="pt-6">
+                        <button type="submit"
+                                class="w-full py-5 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 shadow-vibrant hover:scale-[1.02] active:scale-[0.98] transition-all text-xl">
+                            发布活动
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

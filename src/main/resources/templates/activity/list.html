@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='活动列表', content=~{::section})}">
+<body>
+    <section class="space-y-12">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">探索志愿机会</h1>
+                <p class="text-lg text-slate-500 font-bold leading-relaxed">每一个微小的行动都能汇聚成温暖社区的力量。挑选一个您感兴趣的活动，今天就开始行动吧。</p>
+            </div>
+            
+            <!-- Filter Pills -->
+            <div class="flex flex-wrap gap-2">
+                <button class="px-6 py-2.5 rounded-full bg-primary-600 text-white text-sm font-black shadow-vibrant transition-all">全部</button>
+                <button class="px-6 py-2.5 rounded-full bg-white text-slate-600 text-sm font-black border border-slate-200 hover:border-primary-300 hover:text-primary-600 transition-all">环境卫生</button>
+                <button class="px-6 py-2.5 rounded-full bg-white text-slate-600 text-sm font-black border border-slate-200 hover:border-primary-300 hover:text-primary-600 transition-all">医疗健康</button>
+                <button class="px-6 py-2.5 rounded-full bg-white text-slate-600 text-sm font-black border border-slate-200 hover:border-primary-300 hover:text-primary-600 transition-all">教育辅导</button>
+            </div>
+        </div>
+
+        <div th:if="${activities.empty}" class="bg-white p-20 rounded-[3rem] shadow-soft border border-slate-100 text-center">
+            <div class="h-24 w-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
+                <span class="text-5xl">📅</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4">当前暂无发布的活动</h3>
+            <p class="text-slate-500 font-bold max-w-sm mx-auto">管理员正在快马加鞭筹备中，请稍后再来查看最新的志愿服务机会。</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div th:each="activity : ${activities}" 
+                 class="group bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col">
+                <div class="relative h-56 bg-slate-100 overflow-hidden">
+                    <img th:if="${activity.imageUrl != null}" th:src="${activity.imageUrl}" alt="活动图片" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div th:if="${activity.imageUrl == null}" class="absolute inset-0 flex items-center justify-center text-slate-300">
+                        <svg class="h-20 w-24 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <div class="absolute top-6 left-6 flex flex-wrap gap-2">
+                        <span th:if="${activity.requiredSkills != null and !activity.requiredSkills.isEmpty()}" th:each="skill : ${activity.requiredSkills}" th:text="${skill}"
+                              class="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[10px] font-black uppercase tracking-widest text-primary-700 shadow-sm">技能</span>
+                    </div>
+                    <div th:if="${activity.status == T(com.community.service.entity.Activity.ActivityStatus).PUBLISHED}" 
+                         class="absolute top-6 right-6 h-3 w-3 bg-green-500 rounded-full shadow-[0_0_12px_rgba(34,197,94,0.6)] animate-pulse"></div>
+                </div>
+                
+                <div class="p-8 flex-grow flex flex-col">
+                    <div class="flex items-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
+                        <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <span th:text="${#temporals.format(activity.startTime, 'yyyy年MM月dd日')}">日期</span>
+                    </div>
+                    <h3 th:text="${activity.title}" class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors line-clamp-1">活动标题</h3>
+                    <p th:text="${activity.description}" class="text-slate-500 font-bold text-sm mb-8 line-clamp-2 leading-relaxed flex-grow">活动描述...</p>
+                    
+                    <div class="pt-6 border-t border-slate-50 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-slate-400 font-bold text-xs uppercase tracking-wider">
+                                <svg class="h-4 w-4 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                <span th:text="${activity.location}" class="line-clamp-1">地点</span>
+                            </div>
+                            <div class="flex items-baseline gap-1">
+                                <span th:text="${activity.basePoints}" class="text-xl font-black text-primary-600 tracking-tighter">0</span>
+                                <span class="text-[10px] font-black text-primary-400 uppercase tracking-widest">积分</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex -space-x-2 overflow-hidden">
+                                <div th:each="i : ${#numbers.sequence(1, 3)}" class="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-400 uppercase">
+                                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                                </div>
+                                <div class="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-primary-50 flex items-center justify-center text-[10px] font-black text-primary-600">
+                                    +<span th:text="${activity.enrolledNumber}">0</span>
+                                </div>
+                            </div>
+                            <a th:href="@{/activities/{id}(id=${activity.id})}"
+                               class="px-6 py-2.5 bg-slate-900 text-white text-xs font-black rounded-xl hover:bg-primary-600 transition-all shadow-sm">
+                                立即查看
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-10 border-t border-slate-100/70">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-3">邻里互助任务</h2>
+                    <p class="text-slate-500 font-bold">社区居民发布的求助任务会在这里同步展示（列表为简述，点击可查看详情并参与）。</p>
+                </div>
+                <a href="/demands" class="inline-flex items-center px-6 py-3 bg-white text-slate-700 font-black rounded-2xl border border-slate-200 hover:border-primary-300 hover:text-primary-700 transition-all shadow-soft">
+                    查看全部互助需求
+                </a>
+            </div>
+
+            <div th:if="${demands == null || demands.empty}" class="bg-white p-16 rounded-[3rem] shadow-soft border border-slate-100 text-center">
+                <div class="h-20 w-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="text-4xl">🤝</span>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2">当前暂无互助任务</h3>
+                <p class="text-slate-500 font-bold max-w-sm mx-auto text-sm">社区居民发布需求后将自动同步到这里，方便志愿者快速响应。</p>
+            </div>
+
+            <div th:if="${demands != null && !demands.empty}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div th:each="demand : ${demands}"
+                     class="group bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col">
+                    <div class="relative h-56 bg-slate-100 overflow-hidden">
+                        <img th:if="${demand.imageUrl != null}" th:src="${demand.imageUrl}" alt="需求图片" class="absolute inset-0 w-full h-full object-cover">
+                        <div th:if="${demand.imageUrl == null}" class="absolute inset-0 flex items-center justify-center text-slate-300">
+                            <svg class="h-20 w-24 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                        <div class="absolute top-6 left-6 flex flex-wrap gap-2">
+                            <span th:text="${demand.type}" class="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[10px] font-black uppercase tracking-widest text-primary-700 shadow-sm">类型</span>
+                            <span th:if="${demand.urgency == 'HIGH'}" class="px-4 py-1.5 bg-red-50/90 backdrop-blur-md rounded-xl text-[10px] font-black uppercase tracking-widest text-red-700 shadow-sm">紧急</span>
+                        </div>
+                    </div>
+
+                    <div class="p-8 flex-grow flex flex-col">
+                        <div class="flex items-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
+                            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span th:text="${#temporals.format(demand.createdAt, 'yyyy年MM月dd日')}">日期</span>
+                        </div>
+                        <h3 th:text="${demand.title}" class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors line-clamp-1">任务标题</h3>
+                        <p th:text="${#strings.abbreviate(demand.summary != null ? demand.summary : demand.content, 80)}" class="text-slate-500 font-bold text-sm mb-8 line-clamp-2 leading-relaxed flex-grow">简述...</p>
+
+                        <div class="pt-6 border-t border-slate-50 flex items-center justify-between gap-4">
+                            <div class="text-slate-500 font-bold text-xs">
+                                <span class="text-slate-400 font-black uppercase tracking-wider">发布</span>
+                                <span class="ml-2" th:text="${demand.resident.realName != null ? demand.resident.realName : demand.resident.username}">发布人</span>
+                            </div>
+                            <a th:href="@{/demands/{id}(id=${demand.id})}"
+                               class="px-6 py-2.5 bg-slate-900 text-white text-xs font-black rounded-xl hover:bg-primary-600 transition-all shadow-sm">
+                                查看详情
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

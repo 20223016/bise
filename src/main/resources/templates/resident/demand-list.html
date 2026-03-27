@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout/main :: layout(title='互助需求', content=~{::section})}">
+<body>
+    <section class="space-y-12">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">邻里互助中心</h1>
+                <p class="text-lg text-slate-500 font-bold leading-relaxed">发布您的需求，或发现可以提供帮助的机会。让社区因为您的参与而更加温暖。</p>
+            </div>
+            
+            <a sec:authorize="hasRole('RESIDENT')" href="/demands/new" class="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 transition-all shadow-vibrant hover:scale-105 active:scale-95 group">
+                <svg class="h-6 w-6 mr-3 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" /></svg>
+                发布我的需求
+            </a>
+        </div>
+
+        <div th:if="${demands.empty}" class="bg-white p-20 rounded-[3rem] shadow-soft border border-slate-100 text-center">
+            <div class="h-24 w-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
+                <span class="text-5xl">🤝</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-4">目前暂无互助需求</h3>
+            <p class="text-slate-500 font-bold max-w-sm mx-auto">社区目前很和谐，如果遇到困难，欢迎随时发布您的求助信息。</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-8">
+            <div th:each="demand : ${demands}" 
+                 class="group bg-white rounded-[2.5rem] shadow-soft border border-slate-100 p-8 md:p-12 hover:shadow-xl transition-all duration-500 relative overflow-hidden">
+                <!-- Status Badge (Top Right) -->
+                <div class="absolute top-0 right-0 mt-8 mr-8">
+                    <span th:if="${demand.status == T(com.community.service.entity.Demand.DemandStatus).PENDING}"
+                          class="px-4 py-1.5 bg-yellow-50 text-yellow-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-yellow-100">待匹配</span>
+                    <span th:if="${demand.status != T(com.community.service.entity.Demand.DemandStatus).PENDING}"
+                          class="px-4 py-1.5 bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-green-100">已响应</span>
+                </div>
+
+                <div class="flex flex-col lg:flex-row lg:items-center gap-10">
+                    <div class="flex-grow space-y-6">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span th:text="${demand.type}"
+                                  class="px-4 py-1.5 bg-primary-50 text-primary-700 text-[10px] font-black uppercase tracking-widest rounded-xl">类型</span>
+                            <span th:if="${demand.urgency == 'HIGH'}"
+                                  class="px-4 py-1.5 bg-red-50 text-red-700 text-[10px] font-black uppercase tracking-widest rounded-xl animate-pulse">紧急</span>
+                        </div>
+                        
+                        <h3 th:text="${demand.title}" class="text-2xl md:text-3xl font-black text-slate-900 group-hover:text-primary-600 transition-colors">需求标题</h3>
+                        <p th:text="${demand.content}" class="text-slate-500 font-bold text-lg leading-relaxed line-clamp-2">需求内容描述...</p>
+                        
+                        <div class="flex flex-wrap items-center gap-8 pt-6 border-t border-slate-50">
+                            <div class="flex items-center text-slate-400 font-bold text-sm">
+                                <div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center mr-3 text-primary-600 font-black text-[10px]">
+                                    <span th:text="${demand.resident.realName.substring(0,1)}">U</span>
+                                </div>
+                                发布人：<span th:text="${demand.resident.realName}" class="text-slate-900 ml-1">姓名</span>
+                            </div>
+                            <div class="flex items-center text-slate-400 font-bold text-sm">
+                                <svg class="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                期望时间：<span th:text="${#temporals.format(demand.expectedTime, 'yyyy-MM-dd HH:mm')}" class="text-slate-900 ml-1">时间</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-shrink-0 flex flex-col sm:flex-row lg:flex-col gap-4">
+                        <a th:href="@{/demands/{id}(id=${demand.id})}"
+                           class="inline-flex items-center justify-center px-8 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-primary-600 transition-all shadow-sm text-sm">
+                            查看详情与推荐
+                        </a>
+                        <form sec:authorize="hasRole('VOLUNTEER')" th:if="${demand.assignedVolunteer == null && demand.status != T(com.community.service.entity.Demand.DemandStatus).COMPLETED && demand.status != T(com.community.service.entity.Demand.DemandStatus).CANCELLED}"
+                              th:action="@{/demands/{id}/apply(id=${demand.id})}" method="post">
+                            <button type="submit"
+                                    class="w-full px-8 py-4 bg-white border-2 border-primary-600 text-primary-600 font-black rounded-2xl hover:bg-primary-50 transition-all text-sm">
+                                我来帮忙
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

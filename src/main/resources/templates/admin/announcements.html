@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: layout(title='通知管理', content=~{::div})}">
+<body>
+    <div class="space-y-8 pb-20">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-2">通知管理</h1>
+                <p class="text-slate-500 font-bold">发布和管理社区通知公告</p>
+            </div>
+            <a href="/admin/announcements/new" class="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-black rounded-xl hover:bg-primary-700 transition-all shadow-vibrant">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                发布通知
+            </a>
+        </div>
+
+        <div th:if="${success}" class="p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center gap-3">
+            <svg class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p class="text-sm font-bold text-green-600" th:text="${success}">成功信息</p>
+        </div>
+
+        <div th:if="${error}" class="p-4 bg-red-50 rounded-2xl border border-red-100 flex items-center gap-3">
+            <svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p class="text-sm font-bold text-red-600" th:text="${error}">错误信息</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden">
+            <div class="p-8 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">通知列表</h2>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" th:text="${announcements.size() + ' 条通知'}">0 条通知</span>
+                </div>
+            </div>
+            
+            <div class="divide-y divide-slate-100">
+                <div th:each="announcement : ${announcements}" class="px-8 py-6 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-start justify-between gap-6">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span th:class="'px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ' + 
+                                    ${announcement.priority.name() == 'HIGH' ? 'bg-red-100 text-red-700' : 
+                                      announcement.priority.name() == 'MEDIUM' ? 'bg-amber-100 text-amber-700' : 
+                                      'bg-blue-100 text-blue-700'}">
+                                    <span th:switch="${announcement.priority.name()}">
+                                        <span th:case="'HIGH'">紧急</span>
+                                        <span th:case="'MEDIUM'">重要</span>
+                                        <span th:case="'LOW'">普通</span>
+                                    </span>
+                                </span>
+                                <span th:if="${!announcement.active}" class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg">已停用</span>
+                            </div>
+                            <h3 class="text-lg font-black text-slate-900 mb-2" th:text="${announcement.title}">通知标题</h3>
+                            <p class="text-slate-600 font-bold whitespace-pre-line mb-4" th:text="${announcement.content}">通知内容</p>
+                            <div class="flex items-center gap-4 text-[10px] font-bold text-slate-400">
+                                <span>发布者: <span th:text="${announcement.createdBy != null ? (announcement.createdBy.realName != null ? announcement.createdBy.realName : (announcement.createdBy.username != null ? announcement.createdBy.username : '未知')) : '未知'}">管理员</span></span>
+                                <span th:text="${#temporals.format(announcement.createdAt, 'yyyy-MM-dd HH:mm')}">时间</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <form th:action="@{/admin/announcements/{id}/toggle(id=${announcement.id})}" method="post">
+                                <button type="submit" th:class="'px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl border transition-all ' + 
+                                    ${announcement.active ? 'bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-600 hover:text-white' : 
+                                    'bg-green-50 text-green-700 border-green-100 hover:bg-green-600 hover:text-white'}">
+                                    <span th:text="${announcement.active ? '停用' : '启用'}">切换</span>
+                                </button>
+                            </form>
+                            <form th:action="@{/admin/announcements/{id}/delete(id=${announcement.id})}" method="post">
+                                <button type="submit" class="px-4 py-2 bg-red-50 text-red-700 text-[10px] font-black uppercase tracking-widest rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all" onclick="return confirm('确定要删除这个通知吗？');">
+                                    删除
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${announcements.empty}" class="p-20 text-center text-slate-400 font-bold text-sm">
+                    暂无通知
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

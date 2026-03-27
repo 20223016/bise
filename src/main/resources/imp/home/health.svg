@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0f9ff"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect x="140" y="150" width="920" height="500" rx="60" fill="#ffffff" opacity="0.9"/>
+  <text x="600" y="320" text-anchor="middle" font-family="Inter,Arial" font-weight="900" font-size="64" fill="#0c4a6e">医疗健康</text>
+  <text x="600" y="400" text-anchor="middle" font-family="Inter,Arial" font-weight="700" font-size="28" fill="#0369a1">义诊 · 急救 · 咨询</text>
+  <g transform="translate(520,450)">
+    <rect x="0" y="0" width="160" height="160" rx="40" fill="#0ea5e9"/>
+    <path d="M80 36v88M36 80h88" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+  </g>
+</svg>
+

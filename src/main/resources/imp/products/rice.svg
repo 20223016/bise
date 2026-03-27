@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e0f2fe"/>
+      <stop offset="1" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <rect x="120" y="120" width="560" height="360" rx="48" fill="#ffffff" opacity="0.92"/>
+  <g fill="#0c4a6e">
+    <text x="400" y="240" font-size="54" font-family="Inter,Arial" font-weight="800" text-anchor="middle">大米 5kg</text>
+    <text x="400" y="310" font-size="22" font-family="Inter,Arial" font-weight="700" text-anchor="middle" opacity="0.85">积分兑换商品</text>
+  </g>
+  <g transform="translate(260,340)">
+    <rect x="0" y="0" width="280" height="110" rx="24" fill="#f0f9ff" stroke="#bae6fd" stroke-width="6"/>
+    <text x="140" y="70" font-size="34" font-family="Inter,Arial" font-weight="800" text-anchor="middle" fill="#0369a1">RICE</text>
+  </g>
+</svg>
+

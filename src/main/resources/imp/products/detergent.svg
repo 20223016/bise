@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0f9ff"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <rect x="120" y="120" width="560" height="360" rx="48" fill="#ffffff" opacity="0.92"/>
+  <g fill="#0c4a6e">
+    <text x="400" y="240" font-size="52" font-family="Inter,Arial" font-weight="800" text-anchor="middle">洗衣液 2L</text>
+    <text x="400" y="310" font-size="22" font-family="Inter,Arial" font-weight="700" text-anchor="middle" opacity="0.85">温和配方 · 强力去污</text>
+  </g>
+  <g transform="translate(325,340)">
+    <rect x="0" y="0" width="150" height="110" rx="26" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="6"/>
+    <path d="M45 25h60v60a30 30 0 0 1-60 0z" fill="#0284c7" opacity="0.9"/>
+    <circle cx="75" cy="52" r="18" fill="#ffffff" opacity="0.8"/>
+  </g>
+</svg>
+

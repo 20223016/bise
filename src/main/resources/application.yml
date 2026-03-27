@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: volunteer-service
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/volunteer_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root # 请根据实际情况修改密码
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  # h2:
+  #   console:
+  #     enabled: true
+  #     path: /h2-console
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+
+app:
+  upload-dir: uploads
+  imp-dir: D:/bise/sq_1/server/src/main/resources/imp
+
+jwt:
+  secret: community_volunteer_service_secret_key_2026_trae_ai_project
+  expiration: 86400000 # 24 hours
+
+dashscope:
+  base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  api-key: sk-69c0c898ebec449eaebf4fb3a56443a4
+  model: qwen-plus

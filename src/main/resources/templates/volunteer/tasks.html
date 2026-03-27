@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='任务合集', content=~{::section})}">
+<body>
+    <section class="space-y-12 pb-20">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">我的任务合集</h1>
+                <p class="text-lg text-slate-500 font-bold leading-relaxed">汇总活动报名与互助任务参与进度，快速查看安排与紧急程度。</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="/activities" class="inline-flex items-center justify-center px-6 py-3 bg-white text-slate-700 font-black rounded-2xl border border-slate-200 hover:border-primary-300 hover:text-primary-700 transition-all shadow-soft">
+                    去浏览活动
+                </a>
+                <a href="/demands" class="inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 transition-all shadow-vibrant hover:scale-105 active:scale-95">
+                    去互助任务
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-soft border border-slate-100">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">已接任务</p>
+                <p class="mt-3 text-4xl font-black tracking-tighter text-slate-900" th:text="${summary.totalTasks}">0</p>
+            </div>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-soft border border-slate-100">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">待开始/待执行</p>
+                <p class="mt-3 text-4xl font-black tracking-tighter text-slate-900" th:text="${summary.upcomingTasks}">0</p>
+            </div>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-soft border border-slate-100">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">紧急任务</p>
+                <p class="mt-3 text-4xl font-black tracking-tighter text-slate-900" th:text="${summary.urgentTasks}">0</p>
+            </div>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-soft border border-slate-100">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">进行中</p>
+                <p class="mt-3 text-4xl font-black tracking-tighter text-slate-900" th:text="${summary.activeTasks}">0</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-10 items-start">
+            <div class="xl:col-span-2 bg-white rounded-[3rem] shadow-soft border border-slate-100 overflow-hidden">
+                <div class="px-10 py-8 border-b border-slate-100 flex items-end justify-between gap-6">
+                    <div>
+                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">任务进度</h2>
+                        <p class="mt-2 text-slate-500 font-bold text-sm">按时间与状态综合排序，点击可进入详情。</p>
+                    </div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" th:text="${tasks.size() + ' 条'}">0 条</span>
+                </div>
+                <div class="p-10">
+                    <div th:if="${tasks.empty}" class="p-14 text-center text-slate-400 font-bold">
+                        还没有接到任务，去“浏览活动/互助任务”看看吧。
+                    </div>
+                    <div th:if="${!tasks.empty}" class="space-y-4">
+                        <a th:each="t : ${tasks}" th:href="${t.link}"
+                           class="block p-6 rounded-[2rem] border border-slate-100 bg-white shadow-sm hover:shadow-md hover:border-primary-200 transition-all">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="h-12 w-12 rounded-2xl flex items-center justify-center text-white font-black shadow-sm"
+                                         th:classappend="${t.kind == 'ACTIVITY' ? ' bg-slate-900' : (t.urgent ? ' bg-red-600' : ' bg-primary-600')}">
+                                        <span th:text="${t.kind == 'ACTIVITY' ? '活' : '需'}">需</span>
+                                    </div>
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="text-lg font-black text-slate-900" th:text="${t.title}">标题</h3>
+                                            <span class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                                                  th:text="${t.statusText}"
+                                                  th:classappend="${t.statusText == '已完成' ? ' bg-green-50 text-green-700' : (t.active ? ' bg-primary-50 text-primary-700' : ' bg-slate-100 text-slate-600')}">状态</span>
+                                            <span th:if="${t.kind == 'DEMAND'}" class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                                                  th:text="${t.urgencyText}"
+                                                  th:classappend="${t.urgencyText == '紧急' ? ' bg-red-50 text-red-700' : (t.urgencyText == '较急' ? ' bg-amber-50 text-amber-700' : ' bg-slate-100 text-slate-600')}">紧急</span>
+                                        </div>
+                                        <p class="mt-2 text-slate-500 font-bold text-sm" th:text="${t.timeText}">时间</p>
+                                    </div>
+                                </div>
+                                <div class="text-slate-400 font-black text-xs uppercase tracking-wider">
+                                    <span th:text="${t.kind == 'ACTIVITY' ? '社区活动' : '互助任务'}">类型</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="xl:col-span-1 space-y-10">
+                <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden">
+                    <div class="px-8 py-8 border-b border-slate-100">
+                        <h3 class="text-xl font-black text-slate-900 tracking-tight">任务时间安排</h3>
+                        <p class="mt-2 text-slate-500 font-bold text-sm">近期待开始/待执行任务</p>
+                    </div>
+                    <div class="p-8 space-y-4">
+                        <div th:if="${schedule.empty}" class="p-8 text-center text-slate-400 font-bold text-sm">
+                            暂无近期安排。
+                        </div>
+                        <div th:each="s : ${schedule}" class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <p class="text-sm font-black text-slate-900" th:text="${s.title}">标题</p>
+                                    <p class="mt-2 text-xs font-bold text-slate-500" th:text="${s.timeText}">时间</p>
+                                </div>
+                                <span th:if="${s.kind == 'DEMAND'}" class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                                      th:text="${s.urgencyText}"
+                                      th:classappend="${s.urgencyText == '紧急' ? ' bg-red-50 text-red-700' : (s.urgencyText == '较急' ? ' bg-amber-50 text-amber-700' : ' bg-white text-slate-600 border border-slate-200')}">紧急</span>
+                            </div>
+                            <a th:href="${s.link}" class="mt-4 inline-flex items-center text-primary-700 font-black text-xs">
+                                查看详情
+                                <span class="ml-2">→</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+</body>
+</html>
+

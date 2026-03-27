@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='首页', content=~{::section})}">
+<body>
+    <section class="space-y-24">
+        <!-- Hero Section -->
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-primary-600 to-blue-600 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+            <div class="relative bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden">
+                <div class="flex flex-col lg:flex-row">
+                    <div class="flex-1 p-8 md:p-16 lg:p-20 flex flex-col justify-center">
+                        <div class="inline-flex items-center px-4 py-2 rounded-full bg-primary-50 text-primary-700 text-sm font-black mb-8 self-start shadow-sm ring-1 ring-primary-100 animate-bounce">
+                            <span class="relative flex h-2 w-2 mr-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-600"></span>
+                            </span>
+                            全新社区互助平台现已上线
+                        </div>
+                        <h1 class="text-5xl md:text-7xl font-black tracking-tight text-slate-900 leading-tight mb-8">
+                            服务他人<br/>
+                            <span class="bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent">温暖社区</span>
+                        </h1>
+                        <p class="text-xl text-slate-500 max-w-xl leading-relaxed mb-12 font-medium">
+                            加入我们的志愿者团队，用您的技能和时间为邻里提供帮助。通过服务赚取积分，换取社区福利，共同建设充满爱的心灵家园。
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="/activities" class="inline-flex items-center justify-center px-8 py-4 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 shadow-vibrant hover:scale-105 active:scale-95 transition-all text-lg group">
+                                立即参与活动
+                                <svg class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </a>
+                            <a href="/register" class="inline-flex items-center justify-center px-8 py-4 bg-slate-50 text-slate-700 font-black rounded-2xl hover:bg-slate-100 border border-slate-200 transition-all text-lg">
+                                成为志愿者
+                            </a>
+                        </div>
+                    </div>
+                    <div class="lg:w-2/5 relative h-64 lg:h-auto overflow-hidden">
+                        <img class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 hover:scale-100" src="/imp/home/hero.svg" alt="Volunteers">
+                        <div class="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent lg:block hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Section -->
+        <div th:if="${!announcements.empty}" class="space-y-8">
+            <div class="flex items-center gap-4">
+                <div class="h-12 w-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">社区公告</h2>
+                    <p class="text-slate-500 font-medium">最新通知与重要提醒</p>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div th:each="announcement : ${announcements}" th:class="'p-6 rounded-2xl border-l-4 shadow-soft ' + 
+                    ${announcement.priority.name() == 'HIGH' ? 'bg-red-50 border-red-500' : 
+                      announcement.priority.name() == 'MEDIUM' ? 'bg-amber-50 border-amber-500' : 
+                      'bg-blue-50 border-blue-500'}">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span th:class="'px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ' + 
+                                    ${announcement.priority.name() == 'HIGH' ? 'bg-red-200 text-red-800' : 
+                                      announcement.priority.name() == 'MEDIUM' ? 'bg-amber-200 text-amber-800' : 
+                                      'bg-blue-200 text-blue-800'}">
+                                    <span th:switch="${announcement.priority.name()}">
+                                        <span th:case="'HIGH'">紧急通知</span>
+                                        <span th:case="'MEDIUM'">重要提醒</span>
+                                        <span th:case="'LOW'">普通公告</span>
+                                    </span>
+                                </span>
+                                <span class="text-xs text-slate-400 font-bold" th:text="${#temporals.format(announcement.createdAt, 'yyyy-MM-dd HH:mm')}">时间</span>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900 mb-2" th:text="${announcement.title}">通知标题</h3>
+                            <p class="text-slate-700 font-medium whitespace-pre-line" th:text="${announcement.content}">通知内容</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="group p-8 bg-white rounded-3xl shadow-soft border border-slate-100 hover:border-primary-200 transition-all hover:-translate-y-2">
+                <div class="h-16 w-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-primary-600 group-hover:text-white transition-colors shadow-sm">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-4">身份认证</h3>
+                <p class="text-slate-500 font-medium leading-relaxed">严格的实名认证与技能审核，确保每一位志愿者都具备专业素养与服务热忱。</p>
+            </div>
+            <div class="group p-8 bg-white rounded-3xl shadow-soft border border-slate-100 hover:border-primary-200 transition-all hover:-translate-y-2">
+                <div class="h-16 w-16 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-primary-600 group-hover:text-white transition-colors shadow-sm">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-4">智能匹配</h3>
+                <p class="text-slate-500 font-medium leading-relaxed">基于技能标签与空闲时段的 AI 推荐引擎，让互助需求与专业力量精准对接。</p>
+            </div>
+            <div class="group p-8 bg-white rounded-3xl shadow-soft border border-slate-100 hover:border-primary-200 transition-all hover:-translate-y-2">
+                <div class="h-16 w-16 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-primary-600 group-hover:text-white transition-colors shadow-sm">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-4">积分回馈</h3>
+                <p class="text-slate-500 font-medium leading-relaxed">每一份汗水都有记录，每一小时服务都有价值。积分可兑换多样化社区奖励。</p>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="bg-primary-900 rounded-[3rem] p-12 md:p-24 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-20 -mr-20 h-64 w-64 bg-primary-600 rounded-full blur-3xl opacity-20"></div>
+            <div class="absolute bottom-0 left-0 -mb-20 -ml-20 h-64 w-64 bg-blue-600 rounded-full blur-3xl opacity-20"></div>
+            
+            <div class="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-12 md:gap-24 text-center">
+                <div class="space-y-4">
+                    <p class="text-5xl md:text-6xl font-black text-white tracking-tighter">1,200<span class="text-primary-400">+</span></p>
+                    <p class="text-primary-200 font-bold uppercase tracking-widest text-sm">注册志愿者</p>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-5xl md:text-6xl font-black text-white tracking-tighter">25k<span class="text-primary-400">+</span></p>
+                    <p class="text-primary-200 font-bold uppercase tracking-widest text-sm">累计服务时长</p>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-5xl md:text-6xl font-black text-white tracking-tighter">850<span class="text-primary-400">+</span></p>
+                    <p class="text-primary-200 font-bold uppercase tracking-widest text-sm">已完成活动</p>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-5xl md:text-6xl font-black text-white tracking-tighter">3.4k<span class="text-primary-400">+</span></p>
+                    <p class="text-primary-200 font-bold uppercase tracking-widest text-sm">积分兑换次数</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest Activities Section -->
+        <div class="space-y-12">
+            <div class="flex flex-col md:flex-row items-end justify-between gap-6">
+                <div class="space-y-4">
+                    <h2 class="text-4xl font-black text-slate-900 tracking-tight">活动</h2>
+                    <p class="text-lg text-slate-500 font-medium">响应社区号召，挑选适合您的活动。</p>
+                </div>
+                <a href="/activities" class="inline-flex items-center text-primary-600 font-black hover:text-primary-700 group transition-all text-lg">
+                    浏览全部活动
+                    <svg class="ml-2 h-6 w-6 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Activity Card 1 -->
+                <div class="group bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
+                    <div class="relative h-64 overflow-hidden">
+                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/imp/home/activity.svg" alt="Activity">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-xs font-black text-primary-700 shadow-sm">环境卫生</span>
+                        </div>
+                    </div>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <h3 class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors">周末社区公园大清扫</h3>
+                        <p class="text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed">协助清理公园绿地、步道，共同维护社区美好的休闲环境，为邻里创造整洁空间。</p>
+                        <div class="mt-auto space-y-6">
+                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                                <div class="flex items-center text-slate-400 font-bold text-sm">
+                                    <svg class="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    社区中心公园
+                                </div>
+                                <div class="text-primary-600 font-black">
+                                    50 积分
+                                </div>
+                            </div>
+                            <a href="/activities" class="block w-full py-4 bg-slate-50 text-slate-900 font-black rounded-2xl group-hover:bg-primary-600 group-hover:text-white text-center transition-all">
+                                查看详情
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="group bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
+                    <div class="relative h-64 overflow-hidden">
+                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/imp/home/health.svg" alt="Health">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-xs font-black text-red-700 shadow-sm">医疗义诊</span>
+                        </div>
+                    </div>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <h3 class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors">社区健康行义诊活动</h3>
+                        <p class="text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed">为中老年居民提供免费血压测量、健康咨询及用药指导，欢迎医护背景志愿者。</p>
+                        <div class="mt-auto space-y-6">
+                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                                <div class="flex items-center text-slate-400 font-bold text-sm">
+                                    <svg class="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    文化广场
+                                </div>
+                                <div class="text-primary-600 font-black">
+                                    100 积分
+                                </div>
+                            </div>
+                            <a href="/activities" class="block w-full py-4 bg-slate-50 text-slate-900 font-black rounded-2xl group-hover:bg-primary-600 group-hover:text-white text-center transition-all">
+                                查看详情
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="group bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
+                    <div class="relative h-64 overflow-hidden">
+                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="/imp/home/education.svg" alt="Education">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="px-4 py-2 bg-white/90 backdrop-blur-md rounded-xl text-xs font-black text-yellow-700 shadow-sm">课业辅导</span>
+                        </div>
+                    </div>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <h3 class="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary-600 transition-colors">课后“四点半”学堂</h3>
+                        <p class="text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed">辅导社区内双职工家庭孩子的作业，开展趣味科普活动，陪伴孩子们快乐成长。</p>
+                        <div class="mt-auto space-y-6">
+                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                                <div class="flex items-center text-slate-400 font-bold text-sm">
+                                    <svg class="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    党群服务中心
+                                </div>
+                                <div class="text-primary-600 font-black">
+                                    80 积分
+                                </div>
+                            </div>
+                            <a href="/activities" class="block w-full py-4 bg-slate-50 text-slate-900 font-black rounded-2xl group-hover:bg-primary-600 group-hover:text-white text-center transition-all">
+                                查看详情
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

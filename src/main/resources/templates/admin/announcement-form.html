@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: layout(title='发布通知', content=~{::div})}">
+<body>
+    <div class="space-y-8 pb-20">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-2">发布通知</h1>
+                <p class="text-slate-500 font-bold">向所有用户发布重要通知公告</p>
+            </div>
+            <a href="/admin/announcements" class="inline-flex items-center px-6 py-3 bg-slate-100 text-slate-700 text-sm font-black rounded-xl hover:bg-slate-200 transition-all">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                返回列表
+            </a>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 p-8 md:p-12">
+            <form th:action="@{/admin/announcements}" method="post" class="space-y-8 max-w-3xl">
+                <div>
+                    <label for="title" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">通知标题</label>
+                    <input type="text" id="title" name="title" required
+                           class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900 text-lg"
+                           placeholder="请输入通知标题">
+                </div>
+
+                <div>
+                    <label for="priority" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">优先级</label>
+                    <div class="grid grid-cols-3 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="priority" value="LOW" class="peer sr-only">
+                            <div class="p-4 bg-slate-50 border-2 border-transparent rounded-2xl peer-checked:bg-blue-50 peer-checked:border-blue-500 transition-all text-center">
+                                <div class="w-4 h-4 rounded-full bg-blue-500 mx-auto mb-2"></div>
+                                <div class="text-sm font-black text-slate-700">普通</div>
+                                <div class="text-[10px] text-slate-400">一般通知</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="priority" value="MEDIUM" class="peer sr-only" checked>
+                            <div class="p-4 bg-slate-50 border-2 border-transparent rounded-2xl peer-checked:bg-amber-50 peer-checked:border-amber-500 transition-all text-center">
+                                <div class="w-4 h-4 rounded-full bg-amber-500 mx-auto mb-2"></div>
+                                <div class="text-sm font-black text-slate-700">重要</div>
+                                <div class="text-[10px] text-slate-400">重要提醒</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="priority" value="HIGH" class="peer sr-only">
+                            <div class="p-4 bg-slate-50 border-2 border-transparent rounded-2xl peer-checked:bg-red-50 peer-checked:border-red-500 transition-all text-center">
+                                <div class="w-4 h-4 rounded-full bg-red-500 mx-auto mb-2"></div>
+                                <div class="text-sm font-black text-slate-700">紧急</div>
+                                <div class="text-[10px] text-slate-400">紧急通知</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="content" class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1 mb-3">通知内容</label>
+                    <textarea id="content" name="content" required rows="8"
+                              class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900 resize-none"
+                              placeholder="请输入通知内容..."></textarea>
+                </div>
+
+                <div class="flex items-center gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-4 px-6 bg-primary-600 text-white text-lg font-black rounded-2xl hover:bg-primary-700 transition-all shadow-vibrant">
+                        发布通知
+                    </button>
+                    <a href="/admin/announcements" class="py-4 px-6 bg-slate-100 text-slate-700 text-lg font-black rounded-2xl hover:bg-slate-200 transition-all">
+                        取消
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout/main :: layout(title=${demand.title}, content=~{::section})}">
+<body>
+    <section class="max-w-5xl mx-auto space-y-12 pb-20">
+        <!-- Breadcrumbs -->
+        <nav class="flex text-sm font-bold text-slate-400 uppercase tracking-widest" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="/demands" class="hover:text-primary-600 transition-colors">需求列表</a></li>
+                <li class="flex items-center space-x-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <span class="text-slate-900" th:text="${demand.title}">需求名称</span>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+            <div class="lg:col-span-2 space-y-10">
+                <div class="bg-white rounded-[3rem] shadow-soft border border-slate-100 overflow-hidden">
+                    <div class="p-10 md:p-16">
+                <div class="flex flex-wrap items-center gap-3 mb-8">
+                    <span th:text="${demand.type}" class="px-4 py-1.5 bg-primary-50 text-primary-700 text-[10px] font-black uppercase tracking-widest rounded-xl">类型</span>
+                    <span th:if="${demand.urgency == 'HIGH'}" class="px-4 py-1.5 bg-red-50 text-red-700 text-[10px] font-black uppercase tracking-widest rounded-xl animate-pulse">紧急</span>
+                    <span th:text="${demand.status}" class="px-4 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl">状态</span>
+                </div>
+                
+                <h1 th:text="${demand.title}" class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">需求标题</h1>
+                <p th:if="${demand.summary != null}" th:text="${demand.summary}" class="text-slate-500 font-bold text-lg leading-relaxed mb-8">简述</p>
+
+                <div th:if="${demand.imageUrl != null}" class="mb-12">
+                    <div class="rounded-[2.5rem] overflow-hidden border border-slate-100 bg-slate-50 shadow-soft">
+                        <img th:src="${demand.imageUrl}" alt="需求图片" class="w-full max-h-[420px] object-cover">
+                    </div>
+                </div>
+                
+                <div class="prose prose-slate max-w-none mb-12">
+                    <p th:text="${demand.content}" class="text-slate-600 text-xl leading-relaxed font-medium whitespace-pre-line">需求内容描述...</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-12 border-t border-slate-50">
+                    <div class="flex items-center p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                        <div class="h-14 w-14 bg-white rounded-2xl flex items-center justify-center text-primary-600 shadow-sm mr-6">
+                            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">发布邻居</p>
+                            <p class="text-xl font-black text-slate-900" th:text="${demand.resident.realName}">发布人姓名</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                        <div class="h-14 w-14 bg-white rounded-2xl flex items-center justify-center text-primary-600 shadow-sm mr-6">
+                            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">期望服务时间</p>
+                            <p class="text-xl font-black text-slate-900" th:text="${#temporals.format(demand.expectedTime, 'yyyy-MM-dd HH:mm')}">时间</p>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <!-- Smart Recommendations (Owner only) -->
+                <div th:if="${isOwner}" class="space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-vibrant">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-900 tracking-tight">智能推荐志愿者</h2>
+                        <p class="text-slate-500 font-bold mt-1">基于您的需求类型，AI 为您匹配了以下最合适的志愿者</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${recommendations.empty}" class="bg-white p-16 rounded-[2.5rem] shadow-soft border border-slate-100 text-center">
+                <div class="h-20 w-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="text-4xl">🔍</span>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 mb-2">暂未找到完全匹配的志愿者</h3>
+                <p class="text-slate-500 font-bold max-w-xs mx-auto text-sm">您可以尝试修改需求类型，或者耐心等待有缘的志愿者主动联系。</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div th:each="vol : ${recommendations}" class="group bg-white p-8 rounded-[2.5rem] shadow-soft border border-slate-100 hover:border-primary-200 transition-all duration-500">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="relative mb-6">
+                            <div class="h-24 w-24 rounded-[2rem] bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-3xl font-black shadow-lg group-hover:rotate-6 transition-transform">
+                                <span th:text="${vol.realName.substring(0,1).toUpperCase()}">V</span>
+                            </div>
+                            <div class="absolute -bottom-2 -right-2 h-8 w-8 bg-green-500 rounded-xl border-4 border-white flex items-center justify-center shadow-sm">
+                                <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                        </div>
+                        
+                        <h3 th:text="${vol.realName}" class="text-2xl font-black text-slate-900 mb-2">姓名</h3>
+                        <div class="flex items-center gap-2 mb-8">
+                            <span class="px-3 py-1 bg-primary-50 text-primary-700 text-[10px] font-black uppercase tracking-widest rounded-lg">推荐指数 98%</span>
+                        </div>
+                        
+                        <form th:action="@{/demands/{id}/assign(id=${demand.id})}" method="post" class="w-full">
+                            <input type="hidden" name="volunteerId" th:value="${vol.id}">
+                            <button type="submit" class="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-primary-600 transition-all shadow-sm">
+                                指派帮助
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+                </div>
+
+                <!-- Comments -->
+                <div class="bg-white rounded-[3rem] shadow-soft border border-slate-100 overflow-hidden">
+                    <div class="p-10 md:p-16 space-y-10">
+                        <div class="flex items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-3xl font-black text-slate-900 tracking-tight">评论区</h2>
+                                <p class="text-slate-500 font-bold mt-2">欢迎留言沟通，协助对接更顺畅。</p>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" th:text="${comments.size() + ' 条'}">0 条</span>
+                        </div>
+
+                        <div sec:authorize="isAuthenticated()" class="space-y-4">
+                            <form th:action="@{/demands/{id}/comments(id=${demand.id})}" method="post" class="space-y-4">
+                                <textarea name="content" rows="4" required
+                                          class="block w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none font-bold text-slate-900 resize-none"
+                                          placeholder="写下你的评论（最多500字）"></textarea>
+                                <button type="submit"
+                                        class="inline-flex items-center justify-center px-8 py-4 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 shadow-vibrant hover:scale-105 active:scale-95 transition-all">
+                                    发布评论
+                                </button>
+                            </form>
+                        </div>
+                        <div sec:authorize="isAnonymous()" class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-600 font-bold">
+                            请先 <a href="/login" class="text-primary-600 hover:text-primary-700 underline underline-offset-4 decoration-2 decoration-primary-200">登录</a> 后参与评论。
+                        </div>
+
+                        <div class="space-y-4">
+                            <div th:if="${comments.empty}" class="p-10 text-center text-slate-400 font-bold">
+                                暂无评论，来做第一个留言的人吧。
+                            </div>
+                            <div th:each="c : ${comments}" class="p-6 rounded-2xl border border-slate-100 bg-white shadow-sm">
+                                <div class="flex items-start justify-between gap-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="h-10 w-10 rounded-xl bg-primary-100 flex items-center justify-center text-primary-700 font-black text-sm">
+                                            <span th:text="${c.user.realName != null ? c.user.realName.substring(0,1).toUpperCase() : c.user.username.substring(0,1).toUpperCase()}">U</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-black text-slate-900" th:text="${c.user.realName != null ? c.user.realName : c.user.username}">姓名</p>
+                                            <p class="text-[10px] font-bold text-slate-400" th:text="${#temporals.format(c.createdAt, 'yyyy-MM-dd HH:mm')}">时间</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mt-4 text-slate-700 font-bold whitespace-pre-line" th:text="${c.content}">内容</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Leaderboard -->
+            <aside class="lg:col-span-1 space-y-8">
+                <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden">
+                    <div class="p-8 border-b border-slate-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight">参与志愿者榜单</h3>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" th:text="${participants.size() + ' 人'}">0 人</span>
+                        </div>
+                        <p class="mt-2 text-slate-500 font-bold text-sm">展示已参与本任务的志愿者姓名</p>
+                    </div>
+
+                    <div class="p-8 space-y-4">
+                        <div th:if="${participants.empty}" class="p-8 text-center text-slate-400 font-bold text-sm">
+                            暂无志愿者参与。
+                        </div>
+
+                        <div th:each="p : ${participants}" class="flex items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div class="flex items-center gap-4">
+                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-black shadow-sm">
+                                    <span th:text="${p.volunteer.realName != null ? p.volunteer.realName.substring(0,1).toUpperCase() : p.volunteer.username.substring(0,1).toUpperCase()}">V</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-black text-slate-900" th:text="${p.volunteer.realName != null ? p.volunteer.realName : p.volunteer.username}">志愿者姓名</p>
+                                    <p class="text-[10px] font-bold text-slate-400" th:text="${#temporals.format(p.createdAt, 'yyyy-MM-dd HH:mm')}">参与时间</p>
+                                </div>
+                            </div>
+
+                            <form th:if="${isOwner}" th:action="@{/demands/{id}/assign(id=${demand.id})}" method="post">
+                                <input type="hidden" name="volunteerId" th:value="${p.volunteer.id}">
+                                <button type="submit" class="px-4 py-2 bg-white text-primary-700 text-[10px] font-black uppercase tracking-widest rounded-xl border border-primary-200 hover:bg-primary-50 transition-all">
+                                    指派
+                                </button>
+                            </form>
+                        </div>
+
+                        <form sec:authorize="hasRole('VOLUNTEER')" th:if="${!hasApplied && demand.status != T(com.community.service.entity.Demand.DemandStatus).COMPLETED && demand.status != T(com.community.service.entity.Demand.DemandStatus).CANCELLED}" th:action="@{/demands/{id}/apply(id=${demand.id})}" method="post">
+                            <button type="submit" class="w-full mt-2 py-4 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 shadow-vibrant hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                我来参与任务
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div th:if="${demand.assignedVolunteer != null}" class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 p-8">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">当前指派</p>
+                    <p class="mt-3 text-xl font-black text-slate-900" th:text="${demand.assignedVolunteer.realName != null ? demand.assignedVolunteer.realName : demand.assignedVolunteer.username}">志愿者</p>
+                    
+                    <div class="mt-6 pt-6 border-t border-slate-100">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">任务进度</p>
+                        <div class="text-3xl font-black text-primary-600 mb-2" th:text="${demand.progressPercentage != null ? demand.progressPercentage + '%' : '0%'}">0%</div>
+                        <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-primary-500 to-primary-700 rounded-full transition-all duration-500" 
+                                 th:style="'width: ' + (${demand.progressPercentage != null ? demand.progressPercentage : 0}) + '%'"></div>
+                        </div>
+                    </div>
+                    
+                    <a th:href="@{/demands/{id}/reports(id=${demand.id})}" 
+                       class="block mt-6 w-full py-4 bg-primary-600 text-white font-black rounded-2xl hover:bg-primary-700 shadow-vibrant hover:scale-105 active:scale-95 transition-all text-center">
+                        查看进度汇报
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </section>
+</body>
+</html>

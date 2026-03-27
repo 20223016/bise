@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(title='新建进度汇报', content=~{::section})}">
+<body>
+    <section class="max-w-4xl mx-auto space-y-12 pb-20">
+        <!-- Breadcrumbs -->
+        <nav class="flex text-sm font-bold text-slate-400 uppercase tracking-widest" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="/demands" class="hover:text-primary-600 transition-colors">互助需求</a></li>
+                <li class="flex items-center space-x-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <span class="text-slate-900" th:text="${demand.title}">需求标题</span>
+                </li>
+                <li class="flex items-center space-x-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <span class="text-slate-900">新建进度汇报</span>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- 需求信息 -->
+        <div class="bg-gradient-to-r from-primary-600 to-primary-800 rounded-[2.5rem] shadow-vibrant p-8 md:p-10">
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div class="flex-1">
+                    <h1 class="text-3xl font-black text-white mb-4" th:text="${demand.title}">需求标题</h1>
+                    <p class="text-primary-200 font-bold text-sm mb-4" th:text="${demand.summary}">需求摘要</p>
+                    <div class="flex items-center gap-4">
+                        <span class="px-4 py-1.5 bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white" 
+                              th:text="${demand.type}">类型</span>
+                        <span class="px-4 py-1.5 bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white" 
+                              th:text="${demand.urgency}">紧急程度</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="mb-2">
+                        <p class="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-1">当前进度</p>
+                        <div class="text-4xl font-black text-white tracking-tighter" th:text="${demand.progressPercentage != null ? demand.progressPercentage + '%' : '0%'}">0%</div>
+                    </div>
+                    <div class="w-48 h-3 bg-white/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-white rounded-full transition-all duration-500" 
+                             th:style="'width: ' + (${demand.progressPercentage != null ? demand.progressPercentage : 0}) + '%'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示信息 -->
+        <div th:if="${error}" class="p-6 bg-red-50 border-2 border-red-100 text-red-700 rounded-3xl flex items-center shadow-sm">
+            <div class="h-10 w-10 bg-white rounded-full flex items-center justify-center mr-4 shadow-sm">
+                <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>
+            </div>
+            <p class="font-black" th:text="${error}">操作失败</p>
+        </div>
+
+        <!-- 进度汇报表单 -->
+        <div class="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden">
+            <div class="p-8 md:p-10 border-b border-slate-100">
+                <h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center">
+                    <span class="h-6 w-1.5 bg-primary-600 rounded-full mr-4"></span>
+                    新建进度汇报
+                </h2>
+            </div>
+            
+            <form th:action="@{/demands/{id}/reports(id=${demand.id})}" method="post" enctype="multipart/form-data" class="p-8 md:p-10 space-y-8">
+                <!-- 进度百分比 -->
+                <div>
+                    <label class="block text-sm font-black text-slate-900 mb-4">完成进度 *</label>
+                    <div class="flex items-center gap-4">
+                        <input type="range" name="progressPercentage" min="0" max="100" step="1" 
+                               class="flex-1 h-3 bg-slate-100 rounded-full appearance-none cursor-pointer"
+                               oninput="this.nextElementSibling.value = this.value + '%'">
+                        <input type="number" name="progressPercentageDisplay" min="0" max="100" 
+                               class="w-24 text-2xl font-black text-primary-600 bg-transparent border-0 text-right"
+                               value="0%" readonly>
+                    </div>
+                    <p class="text-slate-400 font-bold text-xs mt-2">拖动滑块选择完成进度（0-100%）</p>
+                </div>
+
+                <!-- 使用的资源 -->
+                <div>
+                    <label class="block text-sm font-black text-slate-900 mb-4">使用的资源</label>
+                    <textarea name="resourcesUsed" rows="3" 
+                              class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-700 font-bold focus:outline-none focus:border-primary-500 transition-colors"
+                              placeholder="请描述您在完成任务过程中使用的资源，如工具、材料、人力等"></textarea>
+                    <p class="text-slate-400 font-bold text-xs mt-2">可选：描述您使用的资源</p>
+                </div>
+
+                <!-- 汇报内容 -->
+                <div>
+                    <label class="block text-sm font-black text-slate-900 mb-4">汇报内容 *</label>
+                    <textarea name="reportContent" rows="6" 
+                              class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-700 font-bold focus:outline-none focus:border-primary-500 transition-colors"
+                              placeholder="请详细描述您的工作进展、遇到的问题、解决方案等"></textarea>
+                    <p class="text-slate-400 font-bold text-xs mt-2">必填：请详细描述您的工作进展</p>
+                </div>
+
+                <!-- 图片上传 -->
+                <div>
+                    <label class="block text-sm font-black text-slate-900 mb-4">相关图片</label>
+                    <div class="border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:border-primary-400 transition-colors">
+                        <input type="file" name="image" accept="image/*" class="hidden" id="imageInput">
+                        <label for="imageInput" class="cursor-pointer">
+                            <div class="h-16 w-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <p class="text-slate-600 font-bold text-sm mb-2">点击上传图片</p>
+                            <p class="text-slate-400 font-bold text-xs">支持 JPG、PNG、GIF 格式，最大 5MB</p>
+                        </label>
+                        <div id="imagePreview" class="mt-4 hidden">
+                            <img id="previewImg" src="" alt="预览" class="max-h-48 mx-auto rounded-2xl shadow-lg">
+                        </div>
+                    </div>
+                    <p class="text-slate-400 font-bold text-xs mt-2">可选：上传相关图片以证明您的进度</p>
+                </div>
+
+                <!-- 提交按钮 -->
+                <div class="flex gap-4 pt-4">
+                    <a th:href="@{/demands/{id}/reports(id=${demand.id})}" 
+                       class="flex-1 px-8 py-4 bg-slate-100 text-slate-700 rounded-2xl font-black hover:bg-slate-200 transition-all text-center">
+                        取消
+                    </a>
+                    <button type="submit" 
+                            class="flex-1 px-8 py-4 bg-primary-600 text-white rounded-2xl font-black hover:bg-primary-700 hover:scale-105 active:scale-95 transition-all shadow-lg">
+                        提交汇报
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
